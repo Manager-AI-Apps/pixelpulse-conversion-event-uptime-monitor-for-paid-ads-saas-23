@@ -1,0 +1,345 @@
+{
+  "build_id": "23",
+  "plan_hash_note": "Read-only reference. Translate this into Drizzle code in lib/db/schema.ts.",
+  "tables": [
+    {
+      "name": "property",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "userId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references user(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "domain",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "snippetKey",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "unique"
+          ]
+        },
+        {
+          "name": "ga4MeasurementId",
+          "type": "text"
+        },
+        {
+          "name": "metaPixelId",
+          "type": "text"
+        },
+        {
+          "name": "stripePublishableKey",
+          "type": "text"
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "indexes": [
+        "idx_property_userId on userId"
+      ]
+    },
+    {
+      "name": "funnel",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "propertyId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references property(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "scheduleMinutes",
+          "type": "integer",
+          "constraints": [
+            "not null",
+            "default 15"
+          ]
+        },
+        {
+          "name": "lastRunAt",
+          "type": "timestamp"
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "indexes": [
+        "idx_funnel_propertyId on propertyId",
+        "idx_funnel_lastRunAt on lastRunAt"
+      ]
+    },
+    {
+      "name": "funnel_step",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "funnelId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references funnel(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "stepOrder",
+          "type": "integer",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "url",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "actionType",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "actionSelector",
+          "type": "text"
+        },
+        {
+          "name": "expectedEvents",
+          "type": "jsonb",
+          "constraints": [
+            "not null",
+            "default '[]'"
+          ]
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "indexes": [
+        "idx_funnel_step_funnelId on funnelId"
+      ]
+    },
+    {
+      "name": "monitor_run",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "funnelId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references funnel(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "diagnosis",
+          "type": "text"
+        },
+        {
+          "name": "ranAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        }
+      ],
+      "indexes": [
+        "idx_monitor_run_funnelId on funnelId",
+        "idx_monitor_run_ranAt on ranAt"
+      ]
+    },
+    {
+      "name": "step_result",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "runId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references monitor_run(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "stepId",
+          "type": "text",
+          "constraints": [
+            "not null",
+            "references funnel_step(id) on delete cascade"
+          ]
+        },
+        {
+          "name": "passed",
+          "type": "boolean",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "firedEvents",
+          "type": "jsonb",
+          "constraints": [
+            "not null",
+            "default '[]'"
+          ]
+        },
+        {
+          "name": "diagnosis",
+          "type": "text"
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "indexes": [
+        "idx_step_result_runId on runId"
+      ]
+    },
+    {
+      "name": "ingest_event",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "constraints": [
+            "primary key"
+          ]
+        },
+        {
+          "name": "snippetKey",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "eventName",
+          "type": "text",
+          "constraints": [
+            "not null"
+          ]
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "constraints": [
+            "not null",
+            "default '{}'"
+          ]
+        },
+        {
+          "name": "receivedAt",
+          "type": "timestamp",
+          "constraints": [
+            "not null",
+            "default now()"
+          ]
+        }
+      ],
+      "indexes": [
+        "idx_ingest_event_snippetKey on snippetKey",
+        "idx_ingest_event_receivedAt on receivedAt"
+      ]
+    }
+  ]
+}
