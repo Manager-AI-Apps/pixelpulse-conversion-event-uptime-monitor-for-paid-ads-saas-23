@@ -19,10 +19,10 @@ import { getSessionCookie } from "better-auth/cookies";
  */
 
 // Page routes that require a signed-in user -> redirect to /sign-in.
-const PROTECTED_PAGE_PREFIXES: string[] = ["/dashboard"];
+const PROTECTED_PAGE_PREFIXES: string[] = ["/dashboard", "/properties"];
 
 // API routes that require auth -> 401 JSON.
-const PROTECTED_API_PREFIXES: string[] = [];
+const PROTECTED_API_PREFIXES: string[] = ["/api/monitor"];
 
 function hasPrefix(pathname: string, prefixes: string[]): boolean {
   return prefixes.some(
@@ -60,5 +60,11 @@ export function middleware(request: NextRequest): NextResponse {
 export const config = {
   // Add this app's protected routes here. Do NOT match public pages or
   // /api/auth/*.
-  matcher: ["/dashboard", "/dashboard/:path*"],
+  matcher: [
+    "/dashboard",
+    "/dashboard/:path*",
+    "/properties",
+    "/properties/:path*",
+    "/api/monitor/:path*",
+  ],
 };
