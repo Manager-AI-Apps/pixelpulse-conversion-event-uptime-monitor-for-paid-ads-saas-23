@@ -24,6 +24,7 @@ import { DataTable } from "@/components/blocks/data-table";
 import type { Column } from "@/components/blocks/data-table";
 import { EmptyState } from "@/components/blocks/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { RunNowButton } from "./run-now-button";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -232,11 +233,14 @@ export default async function FunnelDetailPage({
           title={funnelName}
           description={`Step-by-step event assertions for ${prop.domain}`}
           actions={
-            latestRun ? (
-              <Badge variant={overallStatus} className="text-sm">
-                {latestRun.status === "passed" ? "All passing" : "Failing"}
-              </Badge>
-            ) : undefined
+            <div className="flex items-center gap-2">
+              {latestRun && (
+                <Badge variant={overallStatus} className="text-sm">
+                  {latestRun.status === "passed" ? "All passing" : "Failing"}
+                </Badge>
+              )}
+              <RunNowButton funnelId={funnelId} />
+            </div>
           }
         />
 
